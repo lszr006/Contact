@@ -1,5 +1,8 @@
-// Mailto form handler
-document.getElementById('contactForm').addEventListener('submit', function (e) {
+// Contact form handler
+const contactForm = document.getElementById('contactForm');
+const submitBtn = contactForm.querySelector('.btn-submit');
+
+contactForm.addEventListener('submit', async function (e) {
   e.preventDefault();
 
   const name = document.getElementById('name').value.trim();
@@ -7,10 +10,29 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
   const subject = document.getElementById('subject').value;
   const message = document.getElementById('message').value.trim();
 
-  const body = `Hi, my name is ${name} (${email}).\n\n${message}`;
-  const mailto = `mailto:ls0096196@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = 'Sending...';
+  submitBtn.disabled = true;
 
-  window.location.href = mailto;
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, subject, message }),
+    });
+
+    if (!res.ok) throw new Error('Request failed');
+
+    submitBtn.textContent = 'Message Sent!';
+    contactForm.reset();
+  } catch (err) {
+    submitBtn.textContent = 'Failed — Try Again';
+  } finally {
+    setTimeout(function () {
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }, 3000);
+  }
 });
 
 // Scroll-triggered fade-in animations

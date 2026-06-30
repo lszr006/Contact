@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "npx serve -s . -l $PORT"
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "resend": "^4.0.0"
   }
 }
